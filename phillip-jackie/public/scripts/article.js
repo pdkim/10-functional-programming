@@ -96,5 +96,5 @@ var app = app || {};
       .then(callback);
   };
 
-  module.article = Article
+  // module.Article = Article
 }(app));
