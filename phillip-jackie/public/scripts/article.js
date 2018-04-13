@@ -25,7 +25,7 @@ var app = app || {};
     /* OLD forEach():
   articleData.forEach(articleObject => Article.all.push(new Article(articleObject)));
   */
-    Article.all=articleData.map(articleObject => new Article(articleObject));
+    Article.all = articleData.map(articleObject => new Article(articleObject));
   };
 
   Article.fetchAll = callback => {
@@ -37,19 +37,37 @@ var app = app || {};
   };
 
   Article.numWordsAll = () => {
-    var wordcnt = words.replace(/[^\w\s]/g, "").split(/\s+/).reduce(function(map, word){
-      map[word] = (map[word]||0)+1;
-      return map;
-    }, Object.create(null));
-    return Article.all.map().reduce()
+    // var wordcnt = words.replace(/[^\w\s]/g, "").split(/\s+/).reduce(function(map, word){
+    //   map[word] = (map[word]||0)+1;
+    //   return map;
+    // }, Object.create(null));
+    return Article.all
+      .map(art => art.body.split(' ').length)
+      .reduce((sum, num) => sum + num);
   };
 
   Article.allAuthors = () => {
-    return Article.all.map().reduce();
+    return Article.all
+      .map(art => art.author)
+      .reduce((uniqueNames, author) => {
+        if(!uniqueNames.includes(author)) {
+          uniqueNames.push(author)
+        }
+        return uniqueNames;
+      }, []);
   };
 
   Article.numWordsByAuthor = () => {
-    return Article.allAuthors().map(author => {})
+    return Article.allAuthors()
+      .map(author => {
+        return {
+          author,
+          totalWords : Article.all
+            .filter(article => article.author === author)
+            .map(art => art.body.split(' ').length)
+            .reduce((sum, num) => sum + num)
+        }
+      })
   };
 
   Article.truncateTable = callback => {
@@ -96,5 +114,5 @@ var app = app || {};
       .then(callback);
   };
 
-  // module.Article = Article
+  module.Article = Article;
 }(app));
